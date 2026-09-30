@@ -1,56 +1,88 @@
-<div>
-  <header>
-    <h1>{{ title }}</h1>
-    <button type="button" (click)="logout()">Logout</button>
+<div class="page-shell events-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Gestión de eventos</p>
+      <h1>{{ title }}</h1>
+      <p class="page-intro">Consulta y organiza los eventos disponibles.</p>
+    </div>
+    <button class="button button-quiet" type="button" (click)="logout()">Cerrar sesión</button>
   </header>
 
-  <form (ngSubmit)="searchEvents()">
-    <label for="event-search">Buscar por nombre</label>
-    <input id="event-search" name="search" type="search" [(ngModel)]="searchTerm">
-    <button type="submit">Buscar</button>
+  <section class="toolbar" aria-label="Herramientas de eventos">
+    <form class="search-form" (ngSubmit)="searchEvents()">
+      <label for="event-search">Buscar por nombre</label>
+      <div class="search-controls">
+        <input id="event-search" name="search" type="search" placeholder="Ej. Conferencia" [(ngModel)]="searchTerm">
+        <button class="button button-primary" type="submit">Buscar</button>
+      </div>
+    </form>
     @if (searchTerm) {
-      <button type="button" (click)="clearSearch()">Limpiar</button>
+      <button class="button button-secondary" type="button" (click)="clearSearch()">Limpiar filtro</button>
     }
-  </form>
-
-  <button type="button" (click)="getEvents()" [disabled]="isLoading()">Actualizar eventos</button>
-  <button type="button" (click)="openEventForm()">Nuevo evento</button>
+    <div class="toolbar-actions">
+      <button class="button button-secondary" type="button" (click)="getEvents()" [disabled]="isLoading()">Actualizar</button>
+      <button class="button button-accent" type="button" (click)="openEventForm()">Nuevo evento</button>
+    </div>
+  </section>
 
   @if (message()) {
-    <p role="status">{{ message() }}</p>
+    <p class="notice notice-success" role="status">{{ message() }}</p>
   }
 
   @if (errorMessage()) {
-    <p role="alert">{{ errorMessage() }}</p>
+    <p class="notice notice-error" role="alert">{{ errorMessage() }}</p>
   }
 
-  @if (events().length > 0) {
-    <section aria-labelledby="events-title">
-      <h2 id="events-title">Lista de eventos</h2>
-      <ul>
+  @if (isLoading()) {
+    <div class="state-panel" role="status">
+      <span class="loading-dot" aria-hidden="true"></span>
+      <span>Cargando eventos...</span>
+    </div>
+  } @else if (events().length > 0) {
+    <section class="content-panel" aria-labelledby="events-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Resultados</p>
+          <h2 id="events-title">Lista de eventos</h2>
+        </div>
+        <span class="result-count">{{ events().length }} en esta página</span>
+      </div>
+      <ul class="event-list">
         @for (event of events(); track event.id) {
-          <li>
-            <button type="button" (click)="openEvent(event.id)"><strong>{{ event.name }}</strong></button>
-            <span>ID: {{ event.id }}</span>
-            <span>{{ event.date }}</span>
-            <span>{{ event.location }}</span>
+          <li class="event-row">
+            <div class="event-main">
+              <button class="event-name" type="button" (click)="openEvent(event.id)">{{ event.name }}</button>
+              <span class="event-id">ID {{ event.id }}</span>
+            </div>
+            <div class="event-meta">
+              <span><span class="meta-label">Fecha</span>{{ event.date }}</span>
+              <span><span class="meta-label">Ubicación</span>{{ event.location }}</span>
+            </div>
+            <button class="row-action" type="button" (click)="openEvent(event.id)" aria-label="Ver detalle de {{ event.name }}">Ver detalle <span aria-hidden="true">&rarr;</span></button>
           </li>
         }
       </ul>
     </section>
   } @else {
-    <p>No se encontraron eventos para mostrar.</p>
+    <div class="state-panel state-empty">
+      <h2>No se encontraron eventos</h2>
+      <p>Prueba con otro nombre o limpia el filtro para ver más resultados.</p>
+    </div>
   }
 
   @if (totalPages() > 0) {
-    <nav aria-label="Paginación de eventos">
-      <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 0 || isLoading()">
-        Anterior
-      </button>
-      <span>Página {{ currentPage() + 1 }} de {{ totalPages() }}</span>
-      <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1 || isLoading()">
-        Siguiente
-      </button>
+    <nav class="pagination" aria-label="Paginación de eventos">
+      <button class="page-button page-direction" type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 0 || isLoading()">&larr; Anterior</button>
+      <div class="page-numbers" aria-label="Páginas">
+        @for (item of paginationItems; track $index) {
+          @if (item === 'ellipsis') {
+            <span class="page-ellipsis" aria-hidden="true">...</span>
+          } @else {
+            <button class="page-button" type="button" (click)="goToPage(item)" [attr.aria-current]="item === currentPage() ? 'page' : null">{{ item + 1 }}</button>
+          }
+        }
+      </div>
+      <button class="page-button page-direction" type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1 || isLoading()">Siguiente &rarr;</button>
     </nav>
   }
 </div>

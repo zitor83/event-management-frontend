@@ -1,1 +1,75 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+	--ink: #172b3a;
+	--muted: #617180;
+	--line: #d8e1e8;
+	--surface: #ffffff;
+	--surface-soft: #f5f8fa;
+	--canvas: #eef3f6;
+	--brand: #1f5a70;
+	--brand-dark: #164354;
+	--accent: #d66b4d;
+	--accent-dark: #b6533a;
+	--danger: #b23a48;
+	--success: #2e765c;
+	--focus: #3c8dab;
+	font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+	color: var(--ink);
+	background: var(--canvas);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-width: 320px;
+	min-height: 100vh;
+	margin: 0;
+	background: var(--canvas);
+}
+
+button,
+input,
+select {
+	font: inherit;
+}
+
+button {
+	border: 1px solid transparent;
+	border-radius: 7px;
+	cursor: pointer;
+	font-weight: 700;
+	transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+button:hover:not(:disabled) {
+	transform: translateY(-1px);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+	outline: 3px solid rgb(60 141 171 / 32%);
+	outline-offset: 2px;
+}
+
+button:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+a {
+	color: var(--brand);
+	font-weight: 700;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin-top: 0;
+}

@@ -1,22 +1,26 @@
-<div>
-  <h1>{{ title }}</h1>
-  <h2>Autenticación</h2>
+<main class="login-page">
+  <section class="login-card">
+    <div class="login-mark" aria-hidden="true">EV</div>
+    <p class="eyebrow">Gestión de eventos</p>
+    <h1>{{ title }}</h1>
+    <p class="login-intro">Accede para consultar y administrar tus eventos.</p>
 
-  <form (ngSubmit)="login()">
-    <div>
-      <label for="username">Usuario</label>
-      <input id="username" name="username" [(ngModel)]="username" required>
-    </div>
+    <form (ngSubmit)="login()">
+      <div class="form-field">
+        <label for="username">Usuario</label>
+        <input id="username" name="username" [(ngModel)]="username" autocomplete="username" required>
+      </div>
 
-    <div>
-      <label for="password">Contraseña</label>
-      <input id="password" name="password" type="password" [(ngModel)]="password" required>
-    </div>
+      <div class="form-field">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" [(ngModel)]="password" autocomplete="current-password" required>
+      </div>
 
-    <button type="submit">Login</button>
-  </form>
+      <button class="login-button" type="submit">Iniciar sesión</button>
+    </form>
 
-  @if (errorMessage()) {
-    <p role="alert">{{ errorMessage() }}</p>
-  }
-</div>
+    @if (errorMessage()) {
+      <p class="login-error" role="alert">{{ errorMessage() }}</p>
+    }
+  </section>
+</main>

@@ -1,63 +1,75 @@
-<div>
-  <header>
-    <h1>{{ isEditMode ? 'Editar evento' : 'Nuevo evento' }}</h1>
-    <button type="button" (click)="logout()">Logout</button>
+<div class="page-shell form-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Gestión de eventos</p>
+      <h1>{{ isEditMode ? 'Editar evento' : 'Nuevo evento' }}</h1>
+      <p class="page-intro">{{ isEditMode ? 'Actualiza la información del evento.' : 'Completa los datos básicos para preparar un evento.' }}</p>
+    </div>
+    <button class="button button-quiet" type="button" (click)="logout()">Cerrar sesión</button>
   </header>
 
-  <a routerLink="/events">Volver a eventos</a>
+  <a class="back-link" routerLink="/events">&larr; Volver a eventos</a>
 
   @if (isLoading()) {
-    <p role="status">Cargando categorías...</p>
+    <div class="state-panel" role="status"><span class="loading-dot" aria-hidden="true"></span> Cargando información...</div>
   }
 
   @if (errorMessage()) {
-    <p role="alert">{{ errorMessage() }}</p>
+    <p class="notice notice-error" role="alert">{{ errorMessage() }}</p>
   }
 
-  <form [formGroup]="eventForm" (ngSubmit)="saveEvent()" novalidate>
-    <div>
+  <form class="event-form" [formGroup]="eventForm" (ngSubmit)="saveEvent()" novalidate>
+    <div class="form-heading">
+      <div>
+        <p class="eyebrow">Información principal</p>
+        <h2>Datos del evento</h2>
+      </div>
+      <span class="required-note">* Campos obligatorios</span>
+    </div>
+
+    <div class="form-field">
       <label for="event-name">Nombre</label>
-      <input id="event-name" type="text" formControlName="name">
+      <input id="event-name" type="text" placeholder="Nombre del evento" formControlName="name" [attr.aria-invalid]="eventForm.controls.name.touched && eventForm.controls.name.invalid">
       @if (eventForm.controls.name.touched && eventForm.controls.name.hasError('required')) {
-        <small>El nombre es obligatorio.</small>
+        <small class="field-error">El nombre es obligatorio.</small>
       }
     </div>
 
-    <div>
+    <div class="form-field">
       <label for="event-date">Fecha</label>
-      <input id="event-date" type="date" formControlName="date">
+      <input id="event-date" type="date" formControlName="date" [attr.aria-invalid]="eventForm.controls.date.touched && eventForm.controls.date.invalid">
       @if (eventForm.controls.date.touched && eventForm.controls.date.hasError('required')) {
-        <small>La fecha es obligatoria.</small>
+        <small class="field-error">La fecha es obligatoria.</small>
       }
     </div>
 
-    <div>
+    <div class="form-field">
       <label for="event-location">Ubicación</label>
-      <input id="event-location" type="text" formControlName="location">
+      <input id="event-location" type="text" placeholder="Ej. Auditorio central" formControlName="location" [attr.aria-invalid]="eventForm.controls.location.touched && eventForm.controls.location.invalid">
       @if (eventForm.controls.location.touched && eventForm.controls.location.hasError('required')) {
-        <small>La ubicación es obligatoria.</small>
+        <small class="field-error">La ubicación es obligatoria.</small>
       }
     </div>
 
-    <div>
+    <div class="form-field">
       <label for="event-category">Categoría</label>
-      <select id="event-category" formControlName="categoryId">
+      <select id="event-category" formControlName="categoryId" [attr.aria-invalid]="eventForm.controls.categoryId.touched && eventForm.controls.categoryId.invalid">
         <option [ngValue]="null">Selecciona una categoría</option>
         @for (category of categories(); track category.id) {
           <option [ngValue]="category.id">{{ category.name }}</option>
         }
       </select>
       @if (eventForm.controls.categoryId.touched && eventForm.controls.categoryId.hasError('required')) {
-        <small>La categoría es obligatoria.</small>
+        <small class="field-error">La categoría es obligatoria.</small>
       }
     </div>
 
-    <button type="submit" [disabled]="isLoading()">
+    <button class="button button-primary form-submit" type="submit" [disabled]="isLoading()">
       {{ isEditMode ? 'Actualizar evento' : 'Crear evento' }}
     </button>
   </form>
 
   @if (message()) {
-    <p role="status">{{ message() }}</p>
+    <p class="notice notice-success" role="status">{{ message() }}</p>
   }
 </div>

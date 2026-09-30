@@ -27,6 +27,30 @@ export class EventsPage implements OnInit {
   readonly pageSize = 10;
   readonly sort = 'name';
 
+  get paginationItems(): Array<number | 'ellipsis'> {
+    const total = this.totalPages();
+    const current = this.currentPage();
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, page) => page);
+    }
+
+    const visiblePages = new Set([0, 1, 2, current - 1, current, current + 1, total - 3, total - 2, total - 1]);
+    const pages = [...visiblePages]
+      .filter((page) => page >= 0 && page < total)
+      .sort((first, second) => first - second);
+    const items: Array<number | 'ellipsis'> = [];
+
+    pages.forEach((page, index) => {
+      if (index > 0 && page - pages[index - 1] > 1) {
+        items.push('ellipsis');
+      }
+      items.push(page);
+    });
+
+    return items;
+  }
+
   constructor(
     private apiService: ApiService,
     private authService: AuthService,

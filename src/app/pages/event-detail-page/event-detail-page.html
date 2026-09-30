@@ -1,47 +1,75 @@
-<div>
-  <header>
-    <h1>Detalle del evento</h1>
-    <button type="button" (click)="logout()">Logout</button>
+<div class="page-shell detail-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Gestión de eventos</p>
+      <h1>Detalle del evento</h1>
+      <p class="page-intro">Consulta la información completa y gestiona este evento.</p>
+    </div>
+    <button class="button button-quiet" type="button" (click)="logout()">Cerrar sesión</button>
   </header>
 
-  <a routerLink="/events">Volver a eventos</a>
+  <a class="back-link" routerLink="/events">&larr; Volver a eventos</a>
 
   @if (message()) {
-    <p role="status">{{ message() }}</p>
+    <p class="notice notice-success" role="status">{{ message() }}</p>
   }
 
   @if (isLoading()) {
-    <p role="status">Cargando evento...</p>
+    <div class="state-panel" role="status"><span class="loading-dot" aria-hidden="true"></span> Cargando evento...</div>
   } @else if (notFound()) {
-    <p role="alert">No se encontró el evento solicitado.</p>
+    <div class="state-panel state-empty" role="alert">
+      <h2>No se encontró el evento</h2>
+      <p>El evento solicitado no existe o ya no está disponible.</p>
+    </div>
   } @else if (errorMessage()) {
-    <p role="alert">{{ errorMessage() }}</p>
+    <p class="notice notice-error" role="alert">{{ errorMessage() }}</p>
   } @else if (event(); as event) {
-    <section aria-labelledby="event-title">
-      <h2 id="event-title">{{ event.name }}</h2>
-      <button type="button" (click)="editEvent()" [disabled]="isLoading()">Editar evento</button>
-      <button type="button" (click)="deleteEvent()" [disabled]="isLoading()">Eliminar evento</button>
-      <p>ID: {{ event.id }}</p>
-      <p>Fecha: {{ event.date }}</p>
-      <p>Ubicación: {{ event.location }}</p>
-      <p>Categoría: {{ event.categoryName || 'Sin categoría' }}</p>
+    <section class="detail-card" aria-labelledby="event-title">
+      <div class="detail-card-header">
+        <div>
+          <span class="status-label">Evento</span>
+          <h2 id="event-title">{{ event.name }}</h2>
+        </div>
+        <div class="detail-actions">
+          <button class="button button-primary" type="button" (click)="editEvent()" [disabled]="isLoading()">Editar evento</button>
+          <button class="button button-danger" type="button" (click)="deleteEvent()" [disabled]="isLoading()">Eliminar</button>
+        </div>
+      </div>
 
-      <h3>Speakers</h3>
+      <div class="event-facts">
+        <div><span>ID</span><strong>{{ event.id }}</strong></div>
+        <div><span>Fecha</span><strong>{{ event.date }}</strong></div>
+        <div><span>Ubicación</span><strong>{{ event.location }}</strong></div>
+        <div><span>Categoría</span><strong>{{ event.categoryName || 'Sin categoría' }}</strong></div>
+      </div>
+
+      <div class="speakers-section">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Participantes</p>
+            <h3>Speakers</h3>
+          </div>
+          <span>{{ event.speakers.length }}</span>
+        </div>
       @if (event.speakers.length > 0) {
-        <ul>
+        <ul class="speaker-list">
           @for (speaker of event.speakers; track speaker.id) {
             <li>
-              <strong>{{ speaker.name }}</strong>
-              <span>{{ speaker.email }}</span>
+              <div class="speaker-avatar" aria-hidden="true">{{ speaker.name.charAt(0) }}</div>
+              <div>
+                <strong>{{ speaker.name }}</strong>
+                <span>{{ speaker.email }}</span>
+              </div>
               @if (speaker.bio) {
-                <span>{{ speaker.bio }}</span>
+                <p>{{ speaker.bio }}</p>
               }
             </li>
           }
         </ul>
       } @else {
-        <p>Este evento no tiene speakers.</p>
+        <p class="muted-copy">Este evento no tiene speakers asignados.</p>
       }
+      </div>
     </section>
   }
 </div>
