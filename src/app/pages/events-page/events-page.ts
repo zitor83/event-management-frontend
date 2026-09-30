@@ -22,6 +22,7 @@ export class EventsPage implements OnInit {
   currentPage = signal(0);
   totalPages = signal(0);
   searchTerm = '';
+  private navigationMessage = history.state?.message ?? '';
 
   readonly pageSize = 10;
   readonly sort = 'name';
@@ -44,7 +45,8 @@ export class EventsPage implements OnInit {
       next: (response) => {
         this.events.set(response.content);
         this.totalPages.set(response.totalPages);
-        this.message.set(`Eventos cargados (${response.totalElements} encontrados).`);
+        this.message.set(this.navigationMessage || `Eventos cargados (${response.totalElements} encontrados).`);
+        this.navigationMessage = '';
         this.isLoading.set(false);
       },
       error: (error: HttpErrorResponse) => {

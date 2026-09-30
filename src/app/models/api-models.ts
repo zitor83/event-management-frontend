@@ -34,6 +34,14 @@ export interface EventDetail extends Event {
   speakers: Speaker[];
 }
 
+export interface EventRequest {
+  name: string;
+  date: string;
+  location: string;
+  categoryId: number;
+  speakersIds: number[];
+}
+
 export interface EventListResponse {
   content: Event[];
   number: number;

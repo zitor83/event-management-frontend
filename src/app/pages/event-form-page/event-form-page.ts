@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { Category } from '../../models/api-models';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { Category, EventDetail, EventRequest } from '../../models/api-models';
 import { ApiService } from '../../service/api-service';
 import { AuthService } from '../../service/auth-service';
 
@@ -18,6 +19,9 @@ export class EventFormPage implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
   message = signal('');
+  eventId: number | null = null;
+  isEditMode = false;
+  private speakersIds: number[] = [];
 
   readonly eventForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -29,22 +33,56 @@ export class EventFormPage implements OnInit {
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
+    const id = this.route.snapshot.paramMap.get('id');
+    this.eventId = id ? Number(id) : null;
+    this.isEditMode = this.eventId !== null && Number.isInteger(this.eventId) && this.eventId > 0;
+    this.loadFormData();
   }
 
-  validateForm(): void {
+  saveEvent(): void {
     this.message.set('');
+    this.errorMessage.set('');
     this.eventForm.markAllAsTouched();
 
     if (this.eventForm.invalid) {
       return;
     }
 
-    this.message.set('Formulario válido. El guardado todavía no está implementado.');
+    const value = this.eventForm.getRawValue();
+    if (value.categoryId === null) {
+      return;
+    }
+
+    const eventRequest: EventRequest = {
+      name: value.name ?? '',
+      date: value.date ?? '',
+      location: value.location ?? '',
+      categoryId: value.categoryId,
+      speakersIds: this.speakersIds
+    };
+
+    this.isLoading.set(true);
+    const request = this.isEditMode && this.eventId !== null
+      ? this.apiService.updateEvent(this.eventId, eventRequest)
+      : this.apiService.createEvent(eventRequest);
+
+    request.subscribe({
+      next: (event) => {
+        this.isLoading.set(false);
+        this.router.navigate(['/events', event.id], {
+          state: { message: this.isEditMode ? 'Evento actualizado correctamente.' : 'Evento creado correctamente.' }
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(this.getRequestErrorMessage(error));
+      }
+    });
   }
 
   logout(): void {
@@ -52,22 +90,56 @@ export class EventFormPage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  private loadCategories(): void {
+  private loadFormData(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
+    if (this.isEditMode && this.eventId !== null) {
+      forkJoin({
+        categories: this.apiService.getCategories(),
+        event: this.apiService.getEvent(this.eventId)
+      }).subscribe({
+        next: ({ categories, event }) => {
+          this.categories.set(categories);
+          this.setEventValues(event);
+          this.isLoading.set(false);
+        },
+        error: (error: HttpErrorResponse) => this.handleLoadError(error)
+      });
+      return;
+    }
+
     this.apiService.getCategories().subscribe({
       next: (categories) => {
         this.categories.set(categories);
         this.isLoading.set(false);
       },
-      error: (error: HttpErrorResponse) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Error al obtener categorías: ' + this.getErrorMessage(error));
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage.set(this.errorMessage() + ' -> Posiblemente el token expiró o es inválido.');
-        }
-      }
+      error: (error: HttpErrorResponse) => this.handleLoadError(error)
     });
+  }
+
+  private handleLoadError(error: HttpErrorResponse): void {
+    this.isLoading.set(false);
+    this.errorMessage.set(this.getRequestErrorMessage(error));
+  }
+
+  private setEventValues(event: EventDetail): void {
+    this.speakersIds = event.speakers.map((speaker) => speaker.id);
+    this.eventForm.patchValue({
+      name: event.name,
+      date: event.date,
+      location: event.location,
+      categoryId: event.categoryId
+    });
+  }
+
+  private getRequestErrorMessage(error: HttpErrorResponse): string {
+    let message = 'Error al guardar el evento: ' + this.getErrorMessage(error);
+    if (error.status === 404) {
+      message = 'No se encontró el evento.';
+    } else if (error.status === 401 || error.status === 403) {
+      message += ' -> Posiblemente el token expiró o no tienes permisos.';
+    }
+    return message;
   }
 
   private getErrorMessage(error: HttpErrorResponse): string {

@@ -1,6 +1,6 @@
 <div>
   <header>
-    <h1>Nuevo evento</h1>
+    <h1>{{ isEditMode ? 'Editar evento' : 'Nuevo evento' }}</h1>
     <button type="button" (click)="logout()">Logout</button>
   </header>
 
@@ -14,7 +14,7 @@
     <p role="alert">{{ errorMessage() }}</p>
   }
 
-  <form [formGroup]="eventForm" (ngSubmit)="validateForm()" novalidate>
+  <form [formGroup]="eventForm" (ngSubmit)="saveEvent()" novalidate>
     <div>
       <label for="event-name">Nombre</label>
       <input id="event-name" type="text" formControlName="name">
@@ -52,7 +52,9 @@
       }
     </div>
 
-    <button type="submit">Validar formulario</button>
+    <button type="submit" [disabled]="isLoading()">
+      {{ isEditMode ? 'Actualizar evento' : 'Crear evento' }}
+    </button>
   </form>
 
   @if (message()) {

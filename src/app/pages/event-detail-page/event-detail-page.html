@@ -6,6 +6,10 @@
 
   <a routerLink="/events">Volver a eventos</a>
 
+  @if (message()) {
+    <p role="status">{{ message() }}</p>
+  }
+
   @if (isLoading()) {
     <p role="status">Cargando evento...</p>
   } @else if (notFound()) {
@@ -15,6 +19,8 @@
   } @else if (event(); as event) {
     <section aria-labelledby="event-title">
       <h2 id="event-title">{{ event.name }}</h2>
+      <button type="button" (click)="editEvent()" [disabled]="isLoading()">Editar evento</button>
+      <button type="button" (click)="deleteEvent()" [disabled]="isLoading()">Eliminar evento</button>
       <p>ID: {{ event.id }}</p>
       <p>Fecha: {{ event.date }}</p>
       <p>Ubicación: {{ event.location }}</p>

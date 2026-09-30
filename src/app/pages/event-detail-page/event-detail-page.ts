@@ -17,6 +17,7 @@ export class EventDetailPage implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
   notFound = signal(false);
+  message = signal('');
 
   constructor(
     private apiService: ApiService,
@@ -26,6 +27,7 @@ export class EventDetailPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.message.set(history.state?.message ?? '');
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (!Number.isInteger(id) || id < 1) {
@@ -39,6 +41,34 @@ export class EventDetailPage implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  editEvent(): void {
+    const currentEvent = this.event();
+    if (currentEvent) {
+      this.router.navigate(['/events', currentEvent.id, 'edit']);
+    }
+  }
+
+  deleteEvent(): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !window.confirm(`¿Seguro que quieres eliminar "${currentEvent.name}"?`)) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.apiService.deleteEvent(currentEvent.id).subscribe({
+      next: () => {
+        this.router.navigate(['/events'], {
+          state: { message: 'Evento eliminado correctamente.' }
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(this.getRequestErrorMessage(error));
+      }
+    });
   }
 
   private getEvent(id: number): void {
@@ -69,5 +99,15 @@ export class EventDetailPage implements OnInit {
   private getErrorMessage(error: HttpErrorResponse): string {
     const responseBody = error.error as { message?: unknown } | null;
     return typeof responseBody?.message === 'string' ? responseBody.message : error.message;
+  }
+
+  private getRequestErrorMessage(error: HttpErrorResponse): string {
+    let message = 'Error al eliminar el evento: ' + this.getErrorMessage(error);
+    if (error.status === 404) {
+      message = 'No se encontró el evento.';
+    } else if (error.status === 401 || error.status === 403) {
+      message += ' -> Posiblemente el token expiró o no tienes permisos.';
+    }
+    return message;
   }
 }
