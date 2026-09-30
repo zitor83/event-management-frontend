@@ -1,0 +1,55 @@
+<div>
+  <header>
+    <h1>{{ title }}</h1>
+    <button type="button" (click)="logout()">Logout</button>
+  </header>
+
+  <form (ngSubmit)="searchEvents()">
+    <label for="event-search">Buscar por nombre</label>
+    <input id="event-search" name="search" type="search" [(ngModel)]="searchTerm">
+    <button type="submit">Buscar</button>
+    @if (searchTerm) {
+      <button type="button" (click)="clearSearch()">Limpiar</button>
+    }
+  </form>
+
+  <button type="button" (click)="getEvents()" [disabled]="isLoading()">Actualizar eventos</button>
+
+  @if (message()) {
+    <p role="status">{{ message() }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (events().length > 0) {
+    <section aria-labelledby="events-title">
+      <h2 id="events-title">Lista de eventos</h2>
+      <ul>
+        @for (event of events(); track event.id) {
+          <li>
+            <strong>{{ event.name }}</strong>
+            <span>ID: {{ event.id }}</span>
+            <span>{{ event.date }}</span>
+            <span>{{ event.location }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  } @else {
+    <p>No se encontraron eventos para mostrar.</p>
+  }
+
+  @if (totalPages() > 0) {
+    <nav aria-label="Paginación de eventos">
+      <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 0 || isLoading()">
+        Anterior
+      </button>
+      <span>Página {{ currentPage() + 1 }} de {{ totalPages() }}</span>
+      <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1 || isLoading()">
+        Siguiente
+      </button>
+    </nav>
+  }
+</div>
