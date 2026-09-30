@@ -15,6 +15,19 @@ export interface Event {
   date: string;
 }
 
+export interface Speaker {
+  id: number;
+  name: string;
+  email: string;
+  bio: string;
+}
+
+export interface EventDetail extends Event {
+  categoryId: number | null;
+  categoryName: string | null;
+  speakers: Speaker[];
+}
+
 export interface EventListResponse {
   content: Event[];
   number: number;

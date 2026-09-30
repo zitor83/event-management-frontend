@@ -1,0 +1,41 @@
+<div>
+  <header>
+    <h1>Detalle del evento</h1>
+    <button type="button" (click)="logout()">Logout</button>
+  </header>
+
+  <a routerLink="/events">Volver a eventos</a>
+
+  @if (isLoading()) {
+    <p role="status">Cargando evento...</p>
+  } @else if (notFound()) {
+    <p role="alert">No se encontró el evento solicitado.</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  } @else if (event(); as event) {
+    <section aria-labelledby="event-title">
+      <h2 id="event-title">{{ event.name }}</h2>
+      <p>ID: {{ event.id }}</p>
+      <p>Fecha: {{ event.date }}</p>
+      <p>Ubicación: {{ event.location }}</p>
+      <p>Categoría: {{ event.categoryName || 'Sin categoría' }}</p>
+
+      <h3>Speakers</h3>
+      @if (event.speakers.length > 0) {
+        <ul>
+          @for (speaker of event.speakers; track speaker.id) {
+            <li>
+              <strong>{{ speaker.name }}</strong>
+              <span>{{ speaker.email }}</span>
+              @if (speaker.bio) {
+                <span>{{ speaker.bio }}</span>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>Este evento no tiene speakers.</p>
+      }
+    </section>
+  }
+</div>

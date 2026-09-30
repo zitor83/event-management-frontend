@@ -1,0 +1,19 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+section {
+  margin-top: 1rem;
+}
+
+section p,
+li {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+li span {
+  display: block;
+}

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EventListResponse, JwtAuthResponse, LoginCredentials } from '../models/api-models';
+import { EventDetail, EventListResponse, JwtAuthResponse, LoginCredentials } from '../models/api-models';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,10 @@ export class ApiService {
     }
 
     return this.http.get<EventListResponse>(`${this.apiUrl}/events`, { params });
+  }
+
+  getEvent(id: number): Observable<EventDetail> {
+    return this.http.get<EventDetail>(`${this.apiUrl}/events/${id}`);
   }
 
 }

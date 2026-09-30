@@ -29,7 +29,7 @@
       <ul>
         @for (event of events(); track event.id) {
           <li>
-            <strong>{{ event.name }}</strong>
+            <button type="button" (click)="openEvent(event.id)"><strong>{{ event.name }}</strong></button>
             <span>ID: {{ event.id }}</span>
             <span>{{ event.date }}</span>
             <span>{{ event.location }}</span>
