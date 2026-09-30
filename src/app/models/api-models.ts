@@ -15,6 +15,12 @@ export interface Event {
   date: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface Speaker {
   id: number;
   name: string;

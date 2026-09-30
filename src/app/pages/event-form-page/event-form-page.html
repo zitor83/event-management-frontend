@@ -1,0 +1,61 @@
+<div>
+  <header>
+    <h1>Nuevo evento</h1>
+    <button type="button" (click)="logout()">Logout</button>
+  </header>
+
+  <a routerLink="/events">Volver a eventos</a>
+
+  @if (isLoading()) {
+    <p role="status">Cargando categorías...</p>
+  }
+
+  @if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+  }
+
+  <form [formGroup]="eventForm" (ngSubmit)="validateForm()" novalidate>
+    <div>
+      <label for="event-name">Nombre</label>
+      <input id="event-name" type="text" formControlName="name">
+      @if (eventForm.controls.name.touched && eventForm.controls.name.hasError('required')) {
+        <small>El nombre es obligatorio.</small>
+      }
+    </div>
+
+    <div>
+      <label for="event-date">Fecha</label>
+      <input id="event-date" type="date" formControlName="date">
+      @if (eventForm.controls.date.touched && eventForm.controls.date.hasError('required')) {
+        <small>La fecha es obligatoria.</small>
+      }
+    </div>
+
+    <div>
+      <label for="event-location">Ubicación</label>
+      <input id="event-location" type="text" formControlName="location">
+      @if (eventForm.controls.location.touched && eventForm.controls.location.hasError('required')) {
+        <small>La ubicación es obligatoria.</small>
+      }
+    </div>
+
+    <div>
+      <label for="event-category">Categoría</label>
+      <select id="event-category" formControlName="categoryId">
+        <option [ngValue]="null">Selecciona una categoría</option>
+        @for (category of categories(); track category.id) {
+          <option [ngValue]="category.id">{{ category.name }}</option>
+        }
+      </select>
+      @if (eventForm.controls.categoryId.touched && eventForm.controls.categoryId.hasError('required')) {
+        <small>La categoría es obligatoria.</small>
+      }
+    </div>
+
+    <button type="submit">Validar formulario</button>
+  </form>
+
+  @if (message()) {
+    <p role="status">{{ message() }}</p>
+  }
+</div>

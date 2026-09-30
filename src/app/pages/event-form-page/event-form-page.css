@@ -1,0 +1,33 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+form {
+  max-width: 32rem;
+  margin-top: 1rem;
+}
+
+form div {
+  margin-bottom: 1rem;
+}
+
+label,
+input,
+select,
+small {
+  display: block;
+}
+
+input,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.25rem;
+}
+
+small {
+  color: #b00020;
+  margin-top: 0.25rem;
+}

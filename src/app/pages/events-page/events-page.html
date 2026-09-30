@@ -14,6 +14,7 @@
   </form>
 
   <button type="button" (click)="getEvents()" [disabled]="isLoading()">Actualizar eventos</button>
+  <button type="button" (click)="openEventForm()">Nuevo evento</button>
 
   @if (message()) {
     <p role="status">{{ message() }}</p>

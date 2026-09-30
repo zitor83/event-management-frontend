@@ -82,6 +82,10 @@ export class EventsPage implements OnInit {
     this.router.navigate(['/events', id]);
   }
 
+  openEventForm(): void {
+    this.router.navigate(['/events/new']);
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

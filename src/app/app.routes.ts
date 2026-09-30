@@ -3,6 +3,7 @@ import { authGuard } from './auth/auth.guard';
 import { EventsPage } from './pages/events-page/events-page';
 import { LoginPage } from './pages/login-page/login-page';
 import { EventDetailPage } from './pages/event-detail-page/event-detail-page';
+import { EventFormPage } from './pages/event-form-page/event-form-page';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,11 @@ export const routes: Routes = [
     {
         path: 'events',
         component: EventsPage,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'events/new',
+        component: EventFormPage,
         canActivate: [authGuard]
     },
     {
