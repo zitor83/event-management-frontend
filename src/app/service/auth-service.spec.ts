@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth-service';
 import { LoginCredentials } from '../models/api-models';
 
-const apiUrl = 'http://localhost:8080/api/v1';
+const apiUrl = 'https://api-gestion-eventos-prod-b1b0.onrender.com/api/v1';
 
 describe('AuthService', () => {
   let authService: AuthService;

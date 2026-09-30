@@ -7,7 +7,7 @@ import { Category, EventDetail, EventListResponse, EventRequest, JwtAuthResponse
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:8080/api/v1';
+  private apiUrl = 'https://api-gestion-eventos-prod-b1b0.onrender.com/api/v1';
 
   constructor(private http: HttpClient) { }
 

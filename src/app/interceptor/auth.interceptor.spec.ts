@@ -6,7 +6,7 @@ import { TestBed } from '@angular/core/testing';
 import { authInterceptor } from './auth.interceptor';
 import { AuthService } from '../service/auth-service';
 
-const apiUrl = 'http://localhost:8080/api/v1';
+const apiUrl = 'https://api-gestion-eventos-prod-b1b0.onrender.com/api/v1';
 
 describe('authInterceptor', () => {
   let httpTesting: HttpTestingController;
